@@ -151,7 +151,7 @@ class Ui_MainWindow(object):
         self.log_out.setFont(font)
         self.log_out.setObjectName("log_out")
         self.label_8 = QtWidgets.QLabel(self.centralwidget)
-        self.label_8.setGeometry(QtCore.QRect(250, 410, 311, 20))
+        self.label_8.setGeometry(QtCore.QRect(260, 410, 311, 20))
         self.label_8.setObjectName("label_8")
         self.label_9 = QtWidgets.QLabel(self.centralwidget)
         self.label_9.setGeometry(QtCore.QRect(280, 450, 381, 20))
@@ -165,8 +165,15 @@ class Ui_MainWindow(object):
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
 
+        self.run = QtWidgets.QPushButton(self.centralwidget)
+        self.run.setGeometry(QtCore.QRect(250, 350, 111, 31))
+        self.run.setObjectName("run")
+
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+        self.run.clicked.connect(lambda: self.clicked())
+
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -182,8 +189,8 @@ class Ui_MainWindow(object):
         self.label5.setText(_translate("MainWindow", "Sex:"))
         self.sex.setItemText(0, _translate("MainWindow", "Male"))
         self.sex.setItemText(1, _translate("MainWindow", "Female"))
-        self.smoking.setItemText(0, _translate("MainWindow", "Yes"))
-        self.smoking.setItemText(1, _translate("MainWindow", "No"))
+        self.smoking.setItemText(1, _translate("MainWindow", "Yes"))
+        self.smoking.setItemText(0, _translate("MainWindow", "No"))
         self.label.setText(_translate("MainWindow", "Smoking:"))
         self.label_2.setText(_translate("MainWindow", "Findings:"))
         self.backbleeding.setItemText(0, _translate("MainWindow", "Backbleeding Present"))
@@ -202,19 +209,45 @@ class Ui_MainWindow(object):
         self.label_4.setText(_translate("MainWindow", "Other Details:"))
         self.handedness.setItemText(0, _translate("MainWindow", "Dominant Hand"))
         self.handedness.setItemText(1, _translate("MainWindow", "Non Dominant Hand"))
-        self.mov.setItemText(0, _translate("MainWindow", "MOV high"))
-        self.mov.setItemText(1, _translate("MainWindow", "MOV low"))
+        self.mov.setItemText(1, _translate("MainWindow", "MOV high"))
+        self.mov.setItemText(0, _translate("MainWindow", "MOV low"))
         self.label_5.setText(_translate("MainWindow", "Predicted Outcome:"))
         self.label_6.setText(_translate("MainWindow", "Constant Score: "))
         self.label_7.setText(_translate("MainWindow", "Outcome:"))
+        self.run.setText(_translate("MainWindow", "Run Program"))
 
         
-        self.out_c_score.setText(_translate("MainWindow", "55"))
-        self.log_out.setText(_translate("MainWindow", "Poor"))
+        self.out_c_score.setText(_translate("MainWindow", "0"))
+        self.log_out.setText(_translate("MainWindow", "NA"))
         self.label_8.setText(_translate("MainWindow", "(R^2 value of the model: 0.74574 and RMS error:  6.09)"))
         self.label_9.setText(_translate("MainWindow", "(Accuracy: 93.75%, Sensitivity: 70% and Specificity: 100%)"))
 
+    def clicked(self):
+        ##getting values:
+        age_val=self.age.value()
+        sex_val=self.sex.currentIndex()
+        smoking_val=self.smoking.currentIndex()
+        backbleeding_val=self.backbleeding.currentIndex()
+        headheight_val=self.headheight.currentIndex()
+        capsule_val=self.capsule.currentIndex()
+        pmspike_val=self.pmspike.currentIndex()
+        ant_post_val=self.ant_post.currentIndex()
+        three_four_val=self.three_four.currentIndex()
+        handedness_val=self.handedness.currentIndex()
+        mov_val=self.mov.currentIndex()
 
+        c_score = 86.012 -(0.0803*backbleeding_val)-(7.9069*headheight_val)-(7.179*capsule_val)-(0.2627*age_val)-(5.885*sex_val)-(9.9189*three_four_val)-(0.3706*ant_post_val)-(1.5872*pmspike_val)-(4.4166*smoking_val)+(0.7488*handedness_val)+(2.5524*mov_val)
+
+        nkr = -0.9997 +(1.5061*backbleeding_val)+(1.1844*headheight_val)+(0.9231*capsule_val)-(0.0452*age_val)+(0.5048*sex_val)+(0.6184*three_four_val)+(0.0141*ant_post_val)+(1.0283*pmspike_val)+(0.2451*smoking_val)-(0.0237*handedness_val)-(0.3576*mov_val)
+
+        self.out_c_score.setText(str(round(c_score,2)))
+
+        if nkr>=0:
+            self.log_out.setText("Poor")
+        else:
+            self.log_out.setText("Good")
+
+        
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
